@@ -1,5 +1,5 @@
 %% Important arguments for the script
-actFun = 'tanh';
+actFun = 'sig';
 dataFile = 'stocks.csv';
 rowsToSkip = 0;
 columnsToSkip = 0;

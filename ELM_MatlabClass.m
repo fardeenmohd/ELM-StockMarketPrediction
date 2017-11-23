@@ -39,7 +39,7 @@ classdef ELM_MatlabClass
             switch actFunString
                 case 'tanh'
                     self.actFun = @(x) (1-2./(exp(2*x)+1));
-                case 'logsig'
+                case 'sig'
                     self.actFun = @(x)(1./(1+exp(-x)));
                 case 'linear'
                     self.actFun = @(x) (x);
@@ -57,11 +57,6 @@ classdef ELM_MatlabClass
   
     end
     
-    % return weights and biases
-    function [IW,OW,bias] = getWeights(self)
-        IW = self.IW; OW = self.OW; bias = self.bias;
-    end
-    
     % train the ELM
     function self = train(self,trainData,futureData)
     
@@ -71,11 +66,11 @@ classdef ELM_MatlabClass
         [~,n] = size(X);
         % initialize inputs and bias randomly
         self.IW   = rand(self.nHidden,self.nInputs);
-        self.bias = rand(self.nHidden,1);
+        self.bias = ones(self.nHidden,1);
         % compute activation field F
-        F = self.IW * X + repmat(self.bias,1,n);    
+        H = self.IW * X + repmat(self.bias,1,n);    
         % compute H
-        H = self.actFun(F);
+        %H = self.actFun(F);
         % find OW from matrix H pseudo-inversion
         Hinv    = pinv(H');
         self.OW = Hinv' * Y';                    
