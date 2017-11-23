@@ -63,11 +63,11 @@ classdef ELM_MatlabClass
     end
     
     % train the ELM
-    function self = train(self,train_data)
+    function self = train(self,trainData,futureData)
     
         % get output and inputs and number of patterns n
-        X = train_data(:,1:end)';
-        Y = train_data(:,1:end)';
+        X = trainData';
+        Y = futureData';
         [~,n] = size(X);
         % initialize inputs and bias randomly
         self.IW   = rand(self.nHidden,self.nInputs);
@@ -78,7 +78,7 @@ classdef ELM_MatlabClass
         H = self.actFun(F);
         % find OW from matrix H pseudo-inversion
         Hinv    = pinv(H');
-        self.OW = Hinv * Y';                    
+        self.OW = Hinv' * Y';                    
     end    
     
     % predict using ELM
@@ -91,8 +91,8 @@ classdef ELM_MatlabClass
         % compute H
         H = self.actFun(F);
         % compute output
-        Yhat = (H' * self.OW)';
-        Yhat = Yhat';
+        Yhat = (H * self.OW)';
+        Yhat = Yhat';       
     end
     end
 
