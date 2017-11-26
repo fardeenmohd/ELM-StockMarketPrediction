@@ -1,10 +1,10 @@
 %% Important arguments for the script
-actFun = 'sig';
-dataFile = 'stocks.csv';
-rowsToSkip = 0;
-columnsToSkip = 0;
-numberOfHiddenNeurons = 10;
-trainingPercentage = 50;
+actFun = 'tanh';
+dataFile = 'newstocks.txt';
+rowsToSkip = 1;
+columnsToSkip = 1;
+numberOfHiddenNeurons = 500;
+trainingPercentage = 80;
 daysToPredict = 10;
 
 %% data loading and preprocessing
@@ -32,15 +32,12 @@ ELM = ELM_MatlabClass(nInputs,numberOfHiddenNeurons,actFun);
 ELM = train(ELM,trainData,futureData);
 
 % compute and report accuracy on training dataset
-Yhat = predict(ELM,trainData);
-fprintf('Training Rsquare = %3.3f\n',computeR2(futureData,Yhat));
-
-
+YhatTrain = predict(ELM,trainData);
+fprintf('Training Rsquare = %3.3f\n',computeR2(trainData,YhatTrain));
 
 %% validation of ELM model
-Yhat = predict(ELM,testData);
-fprintf('Testing Rsquare = %3.3f\n',computeR2(futureData,Yhat));
-
+YhatTest = predict(ELM,testData);
+fprintf('Testing Rsquare = %3.3f\n',computeR2(testData,YhatTest));
 
 % %% sensitivity analysis on number of hidden neurons
 % nHidden    = 1:10:100;
