@@ -1,13 +1,13 @@
 classdef ELM_MatlabClass
 % Extreme Learning Machine (ELM) class for regression.
-%
-%   
-%   ELM = ELM_MatlabClass(nInputs,nHidden,actFun)
+%   Author: Fardin Mohammed
+%   Date of revision : 27.11.2017
+%   ELM = ELM_MatlabClass(nInputs,nHidden,activationFunction)
 %
 %   where:
 %           nInputs     -> number of inputs in the dataset (single output) 
 %           nHidden     -> number of hidden neurons of the ELM 
-%           actFun -> 
+%           activationFunction -> 
 %
 %                          Options:
 %                          'tanh'      hyperbolic tangent (default),
@@ -20,9 +20,9 @@ classdef ELM_MatlabClass
 %                          
     
     properties (GetAccess = private)
-        nInputs         % number of inputs
+        nFeatures         % number of features
         nHidden         % number of hidden nodes                
-        actFun          % activation function     
+        activationFunction          % activation function     
         IW              % input weights
         OW              % output weights
         bias            % bias                
@@ -31,60 +31,60 @@ classdef ELM_MatlabClass
     % public methods
     methods
        
-    % constructor
-    function self = ELM_MatlabClass(nInputs,nHidden,actFunString)
-        % # inputs and hidden neurons
-        self.nInputs = nInputs;
+    % constructor class for the ELM class
+    function self = ELM_MatlabClass(nFeatures,nHidden,activationFunctionString)
+        % inputs and hidden neurons
+        self.nFeatures = nFeatures;
         self.nHidden = nHidden;
-            switch actFunString
+        
+            switch activationFunctionString
                 case 'tanh'
-                    self.actFun = @(x) (1-2./(exp(2*x)+1));
+                    self.activationFunction = @(x) (1-2./(exp(2*x)+1));
                 case 'sig'
-                    self.actFun = @(x)(1./(1+exp(-x)));
+                    self.activationFunction = @(x)(1./(1+exp(-x)));
                 case 'linear'
-                    self.actFun = @(x) (x);
+                    self.activationFunction = @(x) (x);
                 case 'radbas'
-                    self.actFun = @radbas;
+                    self.activationFunction = @radbas;
                 case 'sine'
-                    self.actFun = @sin;
+                    self.activationFunction = @sin;
                 case 'hardlim'
-                    self.actFun = @(x) (double(hardlim(x)));
+                    self.activationFunction = @(x) (double(hardlim(x)));
                 case 'tribas'
-                    self.actFun = @tribas;
+                    self.activationFunction = @tribas;
                 otherwise
-                    self.actFun = actFunString;   % custom activation fucntion
+                    self.activationFunction = activationFunctionString;   % custom activation fucntion
             end
-  
     end
     
     % train the ELM
-    function self = train(self,trainData,futureData)
-    
+    function self = train(self,trainX,trainY)
         % get output and inputs and number of patterns n
-        X = trainData';
-        Y = X';
+        X = trainX';
+        Y = trainY';
         [~,n] = size(X);
-        % initialize inputs and bias randomly
-        self.IW   = rand(self.nHidden,self.nInputs);
-        self.bias = ones(self.nHidden,1);
+        % initialize input weights and bias randomly
+        self.IW   = rand(self.nHidden,self.nFeatures);
+        self.bias = rand(self.nHidden,1);
         % compute activation field F
         H = self.IW * X + repmat(self.bias,1,n);    
         % compute H
-        %H = self.actFun(H);
+        H = self.activationFunction(H);
         % find OW from matrix H pseudo-inversion
         Hinv    = pinv(H');
-        self.OW = Hinv * Y;                    
+        %finding the outerweights which is betas
+        self.OW = Hinv * Y';                    
     end    
     
     % predict using ELM
-    function Yhat = predict(self,X)
+    function Yhat = predict(self,testX)
+        testX = testX';
         % get length of test dataset
-        X = X';
-        [~,n] = size(X);
+        [~,n] = size(testX);
         % compute activation field F
-        H = self.IW * X + repmat(self.bias,1,n);
+        H = self.IW * testX + repmat(self.bias,1,n);
         % compute H
-        %H = self.actFun(H);
+        H = self.activationFunction(H);
         % compute output
         Yhat = (H' * self.OW)';
         Yhat = Yhat';       
