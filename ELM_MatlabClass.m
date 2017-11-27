@@ -59,7 +59,7 @@ classdef ELM_MatlabClass
     
     % train the ELM
     function self = train(self,trainX,trainY)
-        % get output and inputs and number of patterns n
+        % get output and inputs and number of entries n
         X = trainX';
         Y = trainY';
         [~,n] = size(X);
